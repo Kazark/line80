@@ -35,7 +35,7 @@ formatViolation limit filepath (lineN, len) =
 
 printViolations : Nat -> String -> List (Nat, Nat) -> IO Nat
 printViolations limit filepath =
-  map length . traverse (putStrLn . formatViolation limit filepath)
+  map length . traverse (fPutStrLn stderr . formatViolation limit filepath)
 
 processFile' : Nat -> String -> String -> IO Nat
 processFile' limit filepath =
@@ -58,10 +58,11 @@ formatTotalMsg limit (S k) = cast (S k) ++ " total lines >" ++ cast limit ++ "."
 handleResult : Nat -> Either (String, FileError) (List Nat) -> IO Int
 handleResult _ (Left (filepath, err)) = do
   fPutStrLn stderr ("Failed to read " ++ filepath ++ ": " ++ show err)
-  pure 1
+  pure 2
 handleResult limit (Right violations) = do
-  putStrLn $ formatTotalMsg limit $ sum violations
-  pure 0
+  let n = sum violations
+  putStrLn $ formatTotalMsg limit n
+  pure (if n == 0 then 0 else 1)
 
 main_ : Nat -> List String -> IO Int
 main_ limit args = do

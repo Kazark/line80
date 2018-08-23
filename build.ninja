@@ -1,4 +1,9 @@
 rule idrisc
   command = idris --total -o $out $in
 
-build line80: idrisc Main.idr
+rule checkself
+  command = $in
+
+build ./line80.exe: idrisc Main.idr
+
+build | checkself: checkself ./line80.exe Main.idr
