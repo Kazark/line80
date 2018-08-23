@@ -1,0 +1,4 @@
+rule idrisc
+  command = idris --total -o $out $in
+
+build line80: idrisc Main.idr
